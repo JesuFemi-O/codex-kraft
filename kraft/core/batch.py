@@ -1,3 +1,5 @@
+"""Utilities for generating batches of synthetic rows."""
+
 from __future__ import annotations
 
 from collections.abc import Iterable
@@ -8,7 +10,12 @@ from kraft.core.registry import get_registered_columns
 
 
 class BatchGenerator:
-    """Generate synthetic rows from column definitions."""
+    """Generate dictionaries that resemble table rows.
+
+    The generator can build from a supplied ``schema`` mapping or lazily load
+    from the global column registry.  Schemas are mutable so tests and runners
+    can swap in an updated set of active columns between batches.
+    """
 
     def __init__(
         self,
@@ -16,6 +23,14 @@ class BatchGenerator:
         *,
         use_registry: bool = False,
     ):
+        """
+        Args:
+            schema: Mapping of column name to :class:`ColumnDefinition`.  If
+                omitted you can set ``use_registry`` to load from the global
+                decorator registry instead.
+            use_registry: When ``True`` the generator clones all registered
+                columns and uses them as the backing schema.
+        """
         if schema is not None:
             self.schema = schema
         elif use_registry:
@@ -26,6 +41,7 @@ class BatchGenerator:
         self._validate_schema()
 
     def _validate_schema(self) -> None:
+        """Ensure the provided schema only contains :class:`ColumnDefinition` entries."""
         if not isinstance(self.schema, dict):
             raise TypeError("Schema must be a mapping of ColumnDefinition objects.")
         for name, column in self.schema.items():
@@ -33,6 +49,7 @@ class BatchGenerator:
                 raise TypeError(f"Schema entry '{name}' is not a ColumnDefinition.")
 
     def generate_value(self, column: str) -> Any:
+        """Generate a single value for the given column name."""
         if column not in self.schema:
             raise KeyError(f"Unknown column '{column}'")
         return self.schema[column].generate()

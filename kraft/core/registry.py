@@ -1,3 +1,5 @@
+"""Global column registry with decorator-based ergonomics."""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -15,7 +17,20 @@ def register_column(
     reserved: bool = False,
     protected: bool = False,
 ) -> Callable[[Callable[[], object]], Callable[[], object]]:
-    """Decorator that records a callable as a reusable column generator."""
+    """Register a reusable column generator via decorator syntax.
+
+    Example:
+        >>> @register_column(name="sku", sql_type="TEXT")
+        ... def sku():
+        ...     return secrets.token_hex(4)
+
+    Args:
+        name: Registry key and SQL column name.
+        sql_type: PostgreSQL type literal.
+        constraints: Optional constraint snippet appended to DDL.
+        reserved: Whether the column should start inactive.
+        protected: Whether the column may be dropped.
+    """
 
     def decorator(func: Callable[[], object]) -> Callable[[], object]:
         _REGISTRY[name] = ColumnDefinition(
@@ -37,5 +52,5 @@ def get_registered_columns() -> dict[str, ColumnDefinition]:
 
 
 def clear_column_registry() -> None:
-    """Test helper to reset the registry between runs."""
+    """Remove all registered columns (useful for tests/examples)."""
     _REGISTRY.clear()

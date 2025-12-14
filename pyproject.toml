@@ -5,7 +5,7 @@ description = "Synthetic CDC simulator and schema evolution toolkit"
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Emmanuel Ogunwede" }]
-license = { file = "LICENSE" }
+license = "MIT"
 dependencies = [
     "psycopg2-binary>=2.9.9",
 ]
@@ -24,6 +24,9 @@ dev = [
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["kraft"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

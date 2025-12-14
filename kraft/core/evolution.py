@@ -1,3 +1,5 @@
+"""Decision engine that orchestrates schema evolution events."""
+
 from __future__ import annotations
 
 import random
@@ -18,6 +20,17 @@ class EvolutionController:
         max_additions: int = 10,
         max_drops: int = 5,
     ):
+        """
+        Args:
+            manager: :class:`SchemaManager` instance to mutate.
+            evolution_interval: Number of batches between evolution attempts.
+            evolution_probability: Chance that an evolution will run when the
+                interval elapses.
+            add_probability: Likelihood that an evolution attempt performs an
+                ADD vs DROP when both are allowed.
+            max_additions: Upper bound on how many columns may be added.
+            max_drops: Upper bound on how many columns may be dropped.
+        """
         self.manager = manager
         self.evolution_interval = evolution_interval
         self.evolution_probability = evolution_probability
@@ -31,6 +44,7 @@ class EvolutionController:
         self.dropped_columns: set[str] = set()
 
     def should_evolve(self, batch_number: int) -> bool:
+        """Return ``True`` if the controller should attempt evolution."""
         if batch_number % self.evolution_interval != 0:
             return False
         return random.random() < self.evolution_probability

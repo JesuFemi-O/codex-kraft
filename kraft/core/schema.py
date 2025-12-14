@@ -1,3 +1,5 @@
+"""High-level schema management helpers."""
+
 from __future__ import annotations
 
 from typing import Any
@@ -16,6 +18,14 @@ class SchemaManager:
         table_name: str,
         columns: dict[str, ColumnDefinition],
     ):
+        """
+        Args:
+            conn: psycopg2 connection object with privileges to run DDL.
+            schema: Database schema (namespace) for the managed table.
+            table_name: Target table name.
+            columns: Mapping of column name to definition including reserved or
+                protected flags.
+        """
         self.conn = conn
         self.schema = schema
         self.table_name = table_name
@@ -34,6 +44,7 @@ class SchemaManager:
         return self.active_columns
 
     def get_create_table_sql(self) -> str:
+        """Render the SQL used by :meth:`create_table`."""
         body = ",\n  ".join(col.ddl() for col in self.active_columns.values())
         return (
             f"CREATE TABLE IF NOT EXISTS {self.schema}.{self.table_name} (\n"
@@ -42,11 +53,13 @@ class SchemaManager:
         )
 
     def create_table(self) -> None:
+        """Execute ``CREATE TABLE IF NOT EXISTS`` using the active columns."""
         with self.conn.cursor() as cur:
             cur.execute(self.get_create_table_sql())
             self.conn.commit()
 
     def drop_table(self) -> None:
+        """Drop the managed table if it exists."""
         ddl = f"DROP TABLE IF EXISTS {self.schema}.{self.table_name};"
         with self.conn.cursor() as cur:
             cur.execute(ddl)
@@ -101,6 +114,7 @@ class SchemaManager:
         return chosen
 
     def register_column(self, name: str, definition: ColumnDefinition) -> bool:
+        """Add a brand new column definition to the registry."""
         if name in self.columns:
             return False
         self.columns[name] = definition
@@ -110,5 +124,6 @@ class SchemaManager:
         return True
 
     def _bump_version(self) -> None:
+        """Increment the schema version and record the active column set."""
         self.schema_version += 1
         self.schema_history.append(set(self.active_columns))

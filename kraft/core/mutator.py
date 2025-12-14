@@ -1,3 +1,5 @@
+"""Mutation helpers responsible for inserts, updates, and deletes."""
+
 from __future__ import annotations
 
 import random
@@ -11,7 +13,11 @@ from kraft.core.batch import BatchGenerator
 
 
 class MutationEngine:
-    """Perform bulk insert/update/delete operations against a PostgreSQL table."""
+    """Perform bulk insert/update/delete operations against a PostgreSQL table.
+
+    The engine purposely tracks counters (inserts/updates/deletes) so callers can
+    assert on mutation volume or emit useful telemetry.
+    """
 
     def __init__(
         self,
@@ -23,6 +29,17 @@ class MutationEngine:
         update_column: str | None = None,
         generator: BatchGenerator | None = None,
     ):
+        """
+        Args:
+            conn: psycopg2 connection targeting the writable database.
+            schema: Database schema (e.g. ``public``).
+            table_name: Target table for all mutations.
+            primary_key: Column name used for ``WHERE`` clauses.
+            update_column: Optional ``TIMESTAMP`` column that should be bumped
+                whenever a row is updated (e.g. ``updated_at``).
+            generator: Optional :class:`BatchGenerator` used to pick random
+                columns/values during updates.
+        """
         self.conn = conn
         self.schema = schema
         self.table_name = table_name
@@ -124,6 +141,7 @@ class MutationEngine:
         return len(ids)
 
     def _primary_key_type(self) -> str:
+        """Best-effort lookup of the primary key SQL type from the generator."""
         if self.generator and self.primary_key in self.generator.schema:
             return self.generator.schema[self.primary_key].sql_type.upper()
         return "TEXT"
