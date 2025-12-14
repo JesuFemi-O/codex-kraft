@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "Emmanuel Ogunwede" }]
 license = { file = "LICENSE" }
-dependencies = []
+dependencies = [
+    "psycopg2-binary>=2.9.9",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -23,3 +25,6 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-ra"
+markers = [
+    "integration: tests that require a running PostgreSQL instance",
+]

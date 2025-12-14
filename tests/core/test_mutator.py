@@ -112,6 +112,25 @@ def test_delete_records_handles_empty_batches():
     cursor.execute.assert_not_called()
 
 
+def test_delete_records_casts_uuid_array_when_needed():
+    conn, cursor = _mock_conn()
+    schema = {
+        "id": ColumnDefinition("id", "UUID", lambda: "uuid"),
+    }
+    generator = BatchGenerator(schema=schema)
+    engine = MutationEngine(
+        conn,
+        schema="public",
+        table_name="events",
+        primary_key="id",
+        generator=generator,
+    )
+
+    engine._delete_records(["uuid-1", "uuid-2"])
+    query = cursor.execute.call_args[0][0]
+    assert "::uuid[]" in query
+
+
 def test_get_counters_reports_totals():
     conn, _ = _mock_conn()
     engine = MutationEngine(conn, schema="public", table_name="events")

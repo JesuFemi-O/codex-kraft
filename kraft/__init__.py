@@ -6,6 +6,7 @@ from kraft.core.evolution import EvolutionController
 from kraft.core.mutator import MutationEngine
 from kraft.core.registry import clear_column_registry, get_registered_columns, register_column
 from kraft.core.runner import SimulationRunner
+from kraft.core.schema import SchemaManager
 
 __all__ = [
     "ColumnDefinition",
@@ -13,6 +14,7 @@ __all__ = [
     "MutationEngine",
     "EvolutionController",
     "SimulationRunner",
+    "SchemaManager",
     "register_column",
     "get_registered_columns",
     "clear_column_registry",

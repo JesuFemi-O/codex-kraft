@@ -110,18 +110,22 @@ class MutationEngine:
         if not ids:
             return 0
 
-        query = sql.SQL(
-            "DELETE FROM {}.{} WHERE {} = ANY(%s)"
-        ).format(
-            sql.Identifier(self.schema),
-            sql.Identifier(self.table_name),
-            sql.Identifier(self.primary_key),
+        pk_type = self._primary_key_type()
+        cast = "::uuid[]" if pk_type == "UUID" else ""
+        query = (
+            f'DELETE FROM "{self.schema}"."{self.table_name}" '
+            f'WHERE "{self.primary_key}" = ANY(%s{cast});'
         )
         with self.conn.cursor() as cur:
             cur.execute(query, (ids,))
             self.conn.commit()
 
         return len(ids)
+
+    def _primary_key_type(self) -> str:
+        if self.generator and self.primary_key in self.generator.schema:
+            return self.generator.schema[self.primary_key].sql_type.upper()
+        return "TEXT"
 
     def get_counters(self) -> Dict[str, int]:
         return {
