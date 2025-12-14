@@ -1,4 +1,4 @@
-.PHONY: fmt lint typecheck test integration all
+.PHONY: fmt lint typecheck test integration docs all
 
 fmt:
 	uv run ruff format kraft tests
@@ -14,5 +14,8 @@ test:
 
 integration:
 	uv run pytest tests/integration -m integration
+
+docs:
+	uv run python -m mkdocs build --strict
 
 all: fmt lint typecheck test
