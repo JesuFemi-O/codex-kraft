@@ -45,3 +45,10 @@ export KRAFT_EXAMPLE_DSN="dbname=kraft_test user=postgres password=postgres host
 uv run python examples/basic_simulation.py
 uv run python examples/registry_simulation.py
 ```
+
+## Documentation & CI
+
+- Build docs locally with `make docs` (runs `mkdocs build --strict`).
+- Serve with `uv run python -m mkdocs serve` for live reload while authoring.
+- `Kraft CI` workflow runs linting, type checking, unit/integration tests, and a docs smoke build on every push/PR.
+- `Docs Site` workflow deploys the docs to GitHub Pages from `main`.
