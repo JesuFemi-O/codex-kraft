@@ -15,6 +15,8 @@ def register_column(
     reserved: bool = False,
     protected: bool = False,
 ) -> Callable[[Callable[[], object]], Callable[[], object]]:
+    """Decorator that records a callable as a reusable column generator."""
+
     def decorator(func: Callable[[], object]) -> Callable[[], object]:
         _REGISTRY[name] = ColumnDefinition(
             name=name,
@@ -30,8 +32,10 @@ def register_column(
 
 
 def get_registered_columns() -> Dict[str, ColumnDefinition]:
+    """Return a copy of the current registry."""
     return _REGISTRY.copy()
 
 
 def clear_column_registry() -> None:
+    """Test helper to reset the registry between runs."""
     _REGISTRY.clear()

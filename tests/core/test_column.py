@@ -2,21 +2,21 @@ from kraft.core.column import ColumnDefinition
 
 
 def test_column_definition_exposes_metadata_and_generator():
-    column = ColumnDefinition(
+    col = ColumnDefinition(
         name="price",
         sql_type="NUMERIC",
-        generator=lambda: 9.99,
+        generator=lambda: 19.99,
         constraints="NOT NULL",
         reserved=True,
         protected=True,
     )
 
-    assert column.name == "price"
-    assert column.sql_type == "NUMERIC"
-    assert column.constraints == "NOT NULL"
-    assert column.reserved is True
-    assert column.protected is True
-    assert column.generate() == 9.99
+    assert col.name == "price"
+    assert col.sql_type == "NUMERIC"
+    assert col.constraints == "NOT NULL"
+    assert col.reserved is True
+    assert col.protected is True
+    assert col.generate() == 19.99
 
 
 def test_column_definition_renders_valid_ddl():

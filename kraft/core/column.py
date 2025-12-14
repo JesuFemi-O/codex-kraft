@@ -16,9 +16,11 @@ class ColumnDefinition:
     protected: bool = False
 
     def generate(self) -> Any:
+        """Return a new synthetic value for this column."""
         return self.generator()
 
     def ddl(self) -> str:
+        """Render the column definition for CREATE/ALTER TABLE statements."""
         parts = [self.name, self.sql_type]
         if self.constraints:
             parts.append(self.constraints.strip())
