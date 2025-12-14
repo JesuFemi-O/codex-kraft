@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Iterable, List, Optional
+from collections.abc import Iterable
+from typing import Any
 
 from kraft.core.column import ColumnDefinition
 from kraft.core.registry import get_registered_columns
@@ -11,7 +12,7 @@ class BatchGenerator:
 
     def __init__(
         self,
-        schema: Optional[Dict[str, ColumnDefinition]] = None,
+        schema: dict[str, ColumnDefinition] | None = None,
         *,
         use_registry: bool = False,
     ):
@@ -36,14 +37,14 @@ class BatchGenerator:
             raise KeyError(f"Unknown column '{column}'")
         return self.schema[column].generate()
 
-    def generate_batch(self, batch_size: int) -> List[Dict[str, Any]]:
-        rows: List[Dict[str, Any]] = []
+    def generate_batch(self, batch_size: int) -> list[dict[str, Any]]:
+        rows: list[dict[str, Any]] = []
         for _ in range(batch_size):
             row = {name: col.generate() for name, col in self.schema.items()}
             rows.append(row)
         return rows
 
-    def get_modifiable_columns(self, *, exclude: Optional[Iterable[str]] = None) -> List[str]:
+    def get_modifiable_columns(self, *, exclude: Iterable[str] | None = None) -> list[str]:
         excluded = set(exclude or [])
         return [
             name

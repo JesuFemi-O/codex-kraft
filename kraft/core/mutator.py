@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import random
-from typing import Dict, Iterable, List, Optional, Tuple
+from collections.abc import Iterable
+from typing import Any
 
 from psycopg2 import sql
 from psycopg2.extras import execute_values
@@ -14,13 +15,13 @@ class MutationEngine:
 
     def __init__(
         self,
-        conn,
+        conn: Any,
         *,
         schema: str,
         table_name: str,
         primary_key: str = "id",
-        update_column: Optional[str] = None,
-        generator: Optional[BatchGenerator] = None,
+        update_column: str | None = None,
+        generator: BatchGenerator | None = None,
     ):
         self.conn = conn
         self.schema = schema
@@ -33,7 +34,7 @@ class MutationEngine:
         self.total_updates = 0
         self.total_deletes = 0
 
-    def insert_batch(self, rows: List[Dict[str, object]]) -> List[object]:
+    def insert_batch(self, rows: list[dict[str, object]]) -> list[object]:
         if not rows:
             return []
 
@@ -53,7 +54,7 @@ class MutationEngine:
         self.total_inserts += len(rows)
         return inserted_ids
 
-    def maybe_mutate_batch(self, ids: Iterable[object]) -> Tuple[int, int]:
+    def maybe_mutate_batch(self, ids: Iterable[object]) -> tuple[int, int]:
         ids = list(ids)
         if not ids or random.random() > 0.5:
             return 0, 0
@@ -70,7 +71,7 @@ class MutationEngine:
         self.total_deletes += deleted
         return 0, deleted
 
-    def _update_records(self, ids: List[object]) -> int:
+    def _update_records(self, ids: list[object]) -> int:
         if not ids or not self.generator:
             return 0
 
@@ -106,7 +107,7 @@ class MutationEngine:
 
         return len(ids)
 
-    def _delete_records(self, ids: List[object]) -> int:
+    def _delete_records(self, ids: list[object]) -> int:
         if not ids:
             return 0
 
@@ -127,7 +128,7 @@ class MutationEngine:
             return self.generator.schema[self.primary_key].sql_type.upper()
         return "TEXT"
 
-    def get_counters(self) -> Dict[str, int]:
+    def get_counters(self) -> dict[str, int]:
         return {
             "total_inserts": self.total_inserts,
             "total_updates": self.total_updates,

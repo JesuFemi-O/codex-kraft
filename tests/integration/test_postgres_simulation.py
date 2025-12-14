@@ -1,6 +1,5 @@
 import os
 import uuid
-from typing import Dict
 
 import psycopg2
 import pytest
@@ -27,7 +26,7 @@ def pg_conn():
     conn.close()
 
 
-def _integration_columns() -> Dict[str, ColumnDefinition]:
+def _integration_columns() -> dict[str, ColumnDefinition]:
     return {
         "id": ColumnDefinition("id", "UUID", lambda: str(uuid.uuid4())),
         "updated_at": ColumnDefinition(

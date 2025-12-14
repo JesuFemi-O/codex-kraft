@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from kraft.core.column import ColumnDefinition
 from kraft.core.evolution import EvolutionController
 from kraft.core.schema import SchemaManager

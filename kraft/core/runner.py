@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Iterable, Optional
+from collections.abc import Iterable
 
 from kraft.core.batch import BatchGenerator
 from kraft.core.column import ColumnDefinition
@@ -20,10 +20,10 @@ class SimulationRunner:
         *,
         total_records: int = 10_000,
         batch_size: int = 500,
-        batch_generator: Optional[BatchGenerator] = None,
-        evolution_controller: Optional[EvolutionController] = None,
-        column_registry: Optional[Dict[str, ColumnDefinition]] = None,
-        protected_columns: Optional[Iterable[str]] = None,
+        batch_generator: BatchGenerator | None = None,
+        evolution_controller: EvolutionController | None = None,
+        column_registry: dict[str, ColumnDefinition] | None = None,
+        protected_columns: Iterable[str] | None = None,
     ):
         self.schema_manager = schema_manager
         self.mutator = mutator

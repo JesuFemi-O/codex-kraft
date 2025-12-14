@@ -1,17 +1,17 @@
 from __future__ import annotations
 
-from typing import Callable, Dict, Optional
+from collections.abc import Callable
 
 from kraft.core.column import ColumnDefinition
 
-_REGISTRY: Dict[str, ColumnDefinition] = {}
+_REGISTRY: dict[str, ColumnDefinition] = {}
 
 
 def register_column(
     *,
     name: str,
     sql_type: str,
-    constraints: Optional[str] = None,
+    constraints: str | None = None,
     reserved: bool = False,
     protected: bool = False,
 ) -> Callable[[Callable[[], object]], Callable[[], object]]:
@@ -31,7 +31,7 @@ def register_column(
     return decorator
 
 
-def get_registered_columns() -> Dict[str, ColumnDefinition]:
+def get_registered_columns() -> dict[str, ColumnDefinition]:
     """Return a copy of the current registry."""
     return _REGISTRY.copy()
 

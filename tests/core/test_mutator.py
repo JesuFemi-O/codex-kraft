@@ -1,7 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from kraft.core.batch import BatchGenerator
 from kraft.core.column import ColumnDefinition
 from kraft.core.mutator import MutationEngine
