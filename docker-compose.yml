@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: kraft-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kraft_test
+    ports:
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
