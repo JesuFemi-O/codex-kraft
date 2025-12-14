@@ -1,0 +1,33 @@
+site_name: Kraft
+site_description: Synthetic CDC simulator and schema evolution toolkit
+docs_dir: docs
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - toc.integrate
+nav:
+  - Home: index.md
+  - Overview: overview.md
+  - Getting Started: getting-started.md
+  - API Reference:
+      - Batch Generator: api/batch.md
+      - Column Definition: api/column.md
+      - Schema Manager: api/schema.md
+      - Mutation Engine: api/mutator.md
+      - Evolution Controller: api/evolution.md
+      - Simulation Runner: api/runner.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            docstring_style: google
+            show_source: true
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
