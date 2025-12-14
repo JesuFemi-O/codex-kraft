@@ -1,10 +1,10 @@
-# Kroft Work Breakdown
+# Kraft Work Breakdown
 
 This task list mirrors the plan while keeping units small enough for review/push cycles. Each block should be tackled in order; after your approval we continue with the next block.
 
 ## Phase 0 – Repo Bootstrapping
 1. **Initialize project structure**
-   - Create `kroft/` package skeleton, `tests/`, `examples/`, `docs/` placeholder, `pyproject.toml`, `README.md`, `LICENSE`, `.gitignore`.
+   - Create `kraft/` package skeleton, `tests/`, `examples/`, `docs/` placeholder, `pyproject.toml`, `README.md`, `LICENSE`, `.gitignore`.
    - Add `plan.md`, `tasks.md`, and basic `CONTRIBUTING.md`.
 2. **Set up tooling scaffolding**
    - Configure Ruff (lint + format), type checker (Pyright/Mypy), pytest settings.

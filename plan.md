@@ -1,6 +1,6 @@
-# Kroft Library Strategic Plan
+# Kraft Library Strategic Plan
 
-This document scopes what is required to turn the Kroft codebase into a production-quality, PyPI-ready package. It captures product goals, functional and non-functional requirements, repository expectations, and the concrete work streams needed to get there.
+This document scopes what is required to turn the Kraft codebase into a production-quality, PyPI-ready package. It captures product goals, functional and non-functional requirements, repository expectations, and the concrete work streams needed to get there.
 
 ## 1. Problem Definition
 
@@ -36,7 +36,7 @@ This document scopes what is required to turn the Kroft codebase into a producti
 ## 4. Repository Structure
 
 ```
-kroft/
+kraft/
   __init__.py
   core/
     column.py
@@ -104,9 +104,9 @@ CHANGELOG.md
 
 ## 6. Success Criteria
 
-- Library installable via `pip install kroft`, usable with minimal setup, and documented.
+- Library installable via `pip install kraft`, usable with minimal setup, and documented.
 - CI green across supported Python versions with integration tests proving real Postgres behavior.
 - Clear contributor guide and automated checks that prevent regressions.
 - Schema evolution audit trail and column protection semantics align with CDC best practices.
 
-By executing the work streams above, the Kroft project will transition from an experimental code dump to a polished, trustworthy package ready for open-source adoption and PyPI distribution.
+By executing the work streams above, the Kraft project will transition from an experimental code dump to a polished, trustworthy package ready for open-source adoption and PyPI distribution.

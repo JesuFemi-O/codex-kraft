@@ -1,13 +1,13 @@
 .PHONY: fmt lint typecheck test all
 
 fmt:
-	uv run ruff format kroft tests
+	uv run ruff format kraft tests
 
 lint:
-	uv run ruff check kroft tests
+	uv run ruff check kraft tests
 
 typecheck:
-	uv run mypy kroft
+	uv run mypy kraft
 
 test:
 	uv run pytest
