@@ -1,7 +1,9 @@
+"""Mutation helpers responsible for inserts, updates, and deletes."""
+
 from __future__ import annotations
 
 import random
-from typing import Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Tuple
 
 from psycopg2 import sql
 from psycopg2.extras import execute_values
@@ -10,11 +12,15 @@ from kraft.core.batch import BatchGenerator
 
 
 class MutationEngine:
-    """Perform bulk insert/update/delete operations against a PostgreSQL table."""
+    """Perform bulk insert/update/delete operations against a PostgreSQL table.
+
+    The engine purposely tracks counters (inserts/updates/deletes) so callers can
+    assert on mutation volume or emit useful telemetry.
+    """
 
     def __init__(
         self,
-        conn,
+        conn: Any,
         *,
         schema: str,
         table_name: str,
@@ -22,6 +28,17 @@ class MutationEngine:
         update_column: Optional[str] = None,
         generator: Optional[BatchGenerator] = None,
     ):
+        """
+        Args:
+            conn: psycopg2 connection targeting the writable database.
+            schema: Database schema (e.g. ``public``).
+            table_name: Target table for all mutations.
+            primary_key: Column name used for ``WHERE`` clauses.
+            update_column: Optional ``TIMESTAMP`` column that should be bumped
+                whenever a row is updated (e.g. ``updated_at``).
+            generator: Optional :class:`BatchGenerator` used to pick random
+                columns/values during updates.
+        """
         self.conn = conn
         self.schema = schema
         self.table_name = table_name
@@ -34,6 +51,7 @@ class MutationEngine:
         self.total_deletes = 0
 
     def insert_batch(self, rows: List[Dict[str, object]]) -> List[object]:
+        """Insert rows in bulk and return their primary key values."""
         if not rows:
             return []
 
@@ -54,6 +72,7 @@ class MutationEngine:
         return inserted_ids
 
     def maybe_mutate_batch(self, ids: Iterable[object]) -> Tuple[int, int]:
+        """Randomly update or delete a subset of the provided IDs."""
         ids = list(ids)
         if not ids or random.random() > 0.5:
             return 0, 0
@@ -71,6 +90,7 @@ class MutationEngine:
         return 0, deleted
 
     def _update_records(self, ids: List[object]) -> int:
+        """Apply single-column updates for the supplied primary keys."""
         if not ids or not self.generator:
             return 0
 
@@ -107,6 +127,7 @@ class MutationEngine:
         return len(ids)
 
     def _delete_records(self, ids: List[object]) -> int:
+        """Remove rows identified by ``ids`` and return the delete count."""
         if not ids:
             return 0
 
@@ -123,11 +144,13 @@ class MutationEngine:
         return len(ids)
 
     def _primary_key_type(self) -> str:
+        """Best-effort lookup of the primary key SQL type from the generator."""
         if self.generator and self.primary_key in self.generator.schema:
             return self.generator.schema[self.primary_key].sql_type.upper()
         return "TEXT"
 
     def get_counters(self) -> Dict[str, int]:
+        """Return a snapshot of total inserts/updates/deletes performed."""
         return {
             "total_inserts": self.total_inserts,
             "total_updates": self.total_updates,
