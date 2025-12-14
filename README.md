@@ -52,3 +52,15 @@ uv run python examples/registry_simulation.py
 - Serve with `uv run python -m mkdocs serve` for live reload while authoring.
 - `Kraft CI` workflow runs linting, type checking, unit/integration tests, and a docs smoke build on every push/PR.
 - `Docs Site` workflow deploys the docs to GitHub Pages from `main`.
+
+## Logging Control
+
+Kraft’s core modules emit `INFO` logs (e.g., inserts, schema changes). To silence them globally in your app:
+
+```python
+import logging
+
+logging.basicConfig(level=logging.WARNING)
+# or target Kraft specifically:
+logging.getLogger("kraft").setLevel(logging.WARNING)
+```

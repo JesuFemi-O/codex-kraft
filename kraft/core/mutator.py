@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import random
 from collections.abc import Iterable
 from typing import Any
@@ -10,6 +11,8 @@ from psycopg2 import sql
 from psycopg2.extras import execute_values
 
 from kraft.core.batch import BatchGenerator
+
+logger = logging.getLogger(__name__)
 
 
 class MutationEngine:
@@ -69,6 +72,9 @@ class MutationEngine:
             self.conn.commit()
 
         self.total_inserts += len(rows)
+        logger.info(
+            "Inserted %d rows into %s.%s", len(rows), self.schema, self.table_name
+        )
         return inserted_ids
 
     def maybe_mutate_batch(self, ids: Iterable[object]) -> tuple[int, int]:
@@ -79,13 +85,22 @@ class MutationEngine:
         operation = random.choice(["update", "delete"])
         sample_size = max(1, len(ids) // 4)
         subset = random.sample(ids, sample_size)
+        logger.debug("Selected %s mutation for %d ids", operation, len(subset))
 
         if operation == "update":
             updated = self._update_records(subset)
             self.total_updates += updated
+            if updated:
+                logger.info(
+                    "Updated %d rows in %s.%s", updated, self.schema, self.table_name
+                )
             return updated, 0
         deleted = self._delete_records(subset)
         self.total_deletes += deleted
+        if deleted:
+            logger.info(
+                "Deleted %d rows from %s.%s", deleted, self.schema, self.table_name
+            )
         return 0, deleted
 
     def _update_records(self, ids: list[object]) -> int:

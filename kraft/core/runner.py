@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterable
 
 from kraft.core.batch import BatchGenerator
@@ -10,6 +11,8 @@ from kraft.core.evolution import EvolutionController
 from kraft.core.mutator import MutationEngine
 from kraft.core.registry import get_registered_columns
 from kraft.core.schema import SchemaManager
+
+logger = logging.getLogger(__name__)
 
 
 class SimulationRunner:
@@ -60,17 +63,24 @@ class SimulationRunner:
         if self.total_batches <= 0:
             return
 
+        logger.info(
+            "Starting simulation: %d records across %d batches",
+            self.total_records,
+            self.total_batches,
+        )
         for batch_num in range(1, self.total_batches + 1):
             self.batch_generator.schema = self.schema_manager.get_active_columns()
             rows = self.batch_generator.generate_batch(self.batch_size)
 
             inserted_ids = self.mutator.insert_batch(rows)
             self.mutator.maybe_mutate_batch(inserted_ids)
+            logger.debug("Completed batch %d/%d", batch_num, self.total_batches)
 
             if self.evolution_controller:
                 result = self.evolution_controller.evolve(batch_num)
                 if result and "Dropped column" in result:
                     self._refresh_generator_schema()
+        logger.info("Simulation finished. Counters: %s", self.mutator.get_counters())
 
     def _refresh_generator_schema(self) -> None:
         """Point the batch generator at the latest active column set."""

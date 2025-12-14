@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 import random
 
 from kraft.core.schema import SchemaManager
+
+logger = logging.getLogger(__name__)
 
 
 class EvolutionController:
@@ -63,6 +66,7 @@ class EvolutionController:
 
         if result:
             self.evolution_log.append(result)
+            logger.info("%s", result["message"])
         return result["message"] if result else "No evolution possible"
 
     def _choose_action(self) -> str:

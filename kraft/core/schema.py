@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from kraft.core.column import ColumnDefinition
+
+logger = logging.getLogger(__name__)
 
 
 class SchemaManager:
@@ -54,6 +57,7 @@ class SchemaManager:
 
     def create_table(self) -> None:
         """Execute ``CREATE TABLE IF NOT EXISTS`` using the active columns."""
+        logger.info("Ensuring table %s.%s exists", self.schema, self.table_name)
         with self.conn.cursor() as cur:
             cur.execute(self.get_create_table_sql())
             self.conn.commit()
@@ -61,6 +65,7 @@ class SchemaManager:
     def drop_table(self) -> None:
         """Drop the managed table if it exists."""
         ddl = f"DROP TABLE IF EXISTS {self.schema}.{self.table_name};"
+        logger.info("Dropping table %s.%s if it exists", self.schema, self.table_name)
         with self.conn.cursor() as cur:
             cur.execute(ddl)
             self.conn.commit()
@@ -83,6 +88,7 @@ class SchemaManager:
             f"ALTER TABLE {self.schema}.{self.table_name} "
             f"ADD COLUMN {definition.ddl()};"
         )
+        logger.info("Adding reserved column '%s' to %s.%s", chosen, self.schema, self.table_name)
         with self.conn.cursor() as cur:
             cur.execute(ddl)
             self.conn.commit()
@@ -105,6 +111,7 @@ class SchemaManager:
             f"ALTER TABLE {self.schema}.{self.table_name} "
             f"DROP COLUMN {chosen};"
         )
+        logger.warning("Dropping column '%s' from %s.%s", chosen, self.schema, self.table_name)
         with self.conn.cursor() as cur:
             cur.execute(ddl)
             self.conn.commit()

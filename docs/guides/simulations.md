@@ -70,6 +70,19 @@ print(mutator.get_counters())
 print(evolution.summary())
 ```
 
+## Controlling Logging
+
+The Kraft modules log `INFO`-level events (inserts, drops, evolution decisions).
+If you prefer a quieter console, raise the level before starting your runner:
+
+```python
+import logging
+
+logging.basicConfig(level=logging.WARNING)
+# or only mute Kraft:
+logging.getLogger("kraft").setLevel(logging.WARNING)
+```
+
 ## Tips
 
 - Adjust ``batch_size`` to match the throughput you need to test.

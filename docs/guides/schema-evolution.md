@@ -44,3 +44,14 @@ class PriorityEvolution(EvolutionController):
 
 In practice you can also call `SchemaManager.add_column()` manually between
 simulation batches to simulate manual migrations or blue/green deployments.
+
+## Logging
+
+Evolution decisions are logged via the `kraft.core.evolution` logger. Raise the
+log level if you want a quieter experience:
+
+```python
+import logging
+
+logging.getLogger("kraft").setLevel(logging.WARNING)
+```
