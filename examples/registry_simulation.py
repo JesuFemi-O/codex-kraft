@@ -1,5 +1,6 @@
 """Registry-driven example that reuses column definitions across simulations."""
 
+import logging
 import os
 import random
 import uuid
@@ -94,6 +95,7 @@ def run_simulation(conn):
 
 
 def main():
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     dsn = os.getenv("KRAFT_EXAMPLE_DSN")
     if not dsn:
         raise SystemExit(
