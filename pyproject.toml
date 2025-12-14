@@ -1,0 +1,25 @@
+[project]
+name = "kroft"
+version = "0.0.1"
+description = "Synthetic CDC simulator and schema evolution toolkit"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Emmanuel Ogunwede" }]
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "ruff>=0.5.0",
+    "mypy>=1.11",
+    "uv>=0.4.20",
+]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
