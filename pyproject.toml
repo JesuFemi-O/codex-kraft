@@ -1,5 +1,5 @@
 [project]
-name = "kroft"
+name = "kraft"
 version = "0.0.1"
 description = "Synthetic CDC simulator and schema evolution toolkit"
 readme = "README.md"

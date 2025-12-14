@@ -1,4 +1,4 @@
-# Kroft
+# Kraft
 
 Synthetic CDC simulator and schema evolution toolkit for PostgreSQL.
 
