@@ -30,3 +30,18 @@ To run the PostgreSQL integration suite:
    ```
 
 Without the `KRAFT_TEST_PG_DSN` variable the integration tests are automatically skipped.
+
+## Examples
+
+Two runnable examples live in `examples/`:
+
+1. **Basic simulation** (`examples/basic_simulation.py`) – Inlines a schema definition, runs a short simulation loop with mutations and schema evolution.
+2. **Registry simulation** (`examples/registry_simulation.py`) – Demonstrates the column registry decorator API and shared columns.
+
+Both require a PostgreSQL DSN exported as `KRAFT_EXAMPLE_DSN` (same connection string as the integration tests). Run them with:
+
+```bash
+export KRAFT_EXAMPLE_DSN="dbname=kraft_test user=postgres password=postgres host=localhost port=55432"
+uv run python examples/basic_simulation.py
+uv run python examples/registry_simulation.py
+```
