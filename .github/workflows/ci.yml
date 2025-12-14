@@ -1,0 +1,63 @@
+name: Kraft CI
+
+on:
+  push:
+    branches:
+      - main
+      - feat/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: kraft_test
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      KRAFT_TEST_PG_DSN: "dbname=kraft_test user=postgres password=postgres host=127.0.0.1 port=55432"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 🧰 Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+
+      - name: 📦 Install dependencies
+        run: |
+          uv sync --all-extras
+
+      - name: 🧹 Lint
+        run: |
+          uv run ruff check kraft tests
+
+      - name: ✅ Type check
+        run: |
+          uv run mypy kraft
+
+      - name: 🧪 Unit & integration tests
+        run: |
+          uv run pytest
+
+      - name: 📚 Docs build (smoke)
+        run: |
+          uv run python -m mkdocs build --strict

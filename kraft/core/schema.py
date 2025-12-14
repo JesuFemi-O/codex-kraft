@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 from kraft.core.column import ColumnDefinition
 
@@ -16,7 +16,7 @@ class SchemaManager:
         *,
         schema: str,
         table_name: str,
-        columns: Dict[str, ColumnDefinition],
+        columns: dict[str, ColumnDefinition],
     ):
         """
         Args:
@@ -31,17 +31,16 @@ class SchemaManager:
         self.table_name = table_name
         self.columns = columns
 
-        self.active_columns: Dict[str, ColumnDefinition] = {
+        self.active_columns: dict[str, ColumnDefinition] = {
             name: col for name, col in columns.items() if not col.reserved
         }
         self.schema_version = 1
-        self.schema_history: List[Set[str]] = [set(self.active_columns)]
+        self.schema_history: list[set[str]] = [set(self.active_columns)]
 
     # ------------------------------------------------------------------ #
     #   Table lifecycle helpers                                          #
     # ------------------------------------------------------------------ #
-    def get_active_columns(self) -> Dict[str, ColumnDefinition]:
-        """Return the dictionary of currently materialized columns."""
+    def get_active_columns(self) -> dict[str, ColumnDefinition]:
         return self.active_columns
 
     def get_create_table_sql(self) -> str:
@@ -69,8 +68,7 @@ class SchemaManager:
     # ------------------------------------------------------------------ #
     #   Schema evolution helpers                                         #
     # ------------------------------------------------------------------ #
-    def add_column(self) -> Optional[str]:
-        """Promote the next reserved column into the active schema."""
+    def add_column(self) -> str | None:
         candidates = [
             name
             for name, col in self.columns.items()
@@ -93,8 +91,7 @@ class SchemaManager:
         self._bump_version()
         return chosen
 
-    def drop_column(self) -> Optional[str]:
-        """Drop a non-protected column from the table and active schema."""
+    def drop_column(self) -> str | None:
         candidates = [
             name
             for name, col in self.active_columns.items()

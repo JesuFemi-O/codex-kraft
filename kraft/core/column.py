@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable, Optional
+from typing import Any
 
 
 @dataclass(frozen=True)
@@ -29,7 +30,7 @@ class ColumnDefinition:
     name: str
     sql_type: str
     generator: Callable[[], Any]
-    constraints: Optional[str] = None
+    constraints: str | None = None
     reserved: bool = False
     protected: bool = False
 
