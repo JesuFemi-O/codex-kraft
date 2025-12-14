@@ -1,3 +1,5 @@
+"""High-level orchestrator that glues Kraft components together."""
+
 from __future__ import annotations
 
 from typing import Dict, Iterable, Optional
@@ -25,6 +27,19 @@ class SimulationRunner:
         column_registry: Optional[Dict[str, ColumnDefinition]] = None,
         protected_columns: Optional[Iterable[str]] = None,
     ):
+        """
+        Args:
+            schema_manager: Manages physical table schema and evolution history.
+            mutator: Performs inserts/updates/deletes for each batch.
+            total_records: Total number of synthetic records to emit.
+            batch_size: Number of rows generated per iteration.
+            batch_generator: Optional generator instance; a new one will be
+                created automatically when omitted.
+            evolution_controller: Optional controller that decides when to add
+                or drop columns.
+            column_registry: Optional registry snapshot to seed new generators.
+            protected_columns: Additional columns that should never be dropped.
+        """
         self.schema_manager = schema_manager
         self.mutator = mutator
         self.total_records = total_records
@@ -41,6 +56,7 @@ class SimulationRunner:
         )
 
     def run(self) -> None:
+        """Execute the simulation loop."""
         if self.total_batches <= 0:
             return
 
@@ -57,4 +73,5 @@ class SimulationRunner:
                     self._refresh_generator_schema()
 
     def _refresh_generator_schema(self) -> None:
+        """Point the batch generator at the latest active column set."""
         self.batch_generator.schema = self.schema_manager.get_active_columns()

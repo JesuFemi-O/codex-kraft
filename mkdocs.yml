@@ -9,8 +9,13 @@ theme:
     - toc.integrate
 nav:
   - Home: index.md
-  - Overview: overview.md
+  - Fundamentals:
+      - Overview: overview.md
+      - Architecture: architecture.md
   - Getting Started: getting-started.md
+  - Guides:
+      - Running Simulations: guides/simulations.md
+      - Schema Evolution Playbook: guides/schema-evolution.md
   - API Reference:
       - Batch Generator: api/batch.md
       - Column Definition: api/column.md
